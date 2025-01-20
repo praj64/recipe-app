@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Filter from './Filter';
 import Recipe from './Recipe';
 import '../styles/RecipeBook.css';
 
 const RecipeBook = () => {
-  const [recipes, setRecipes] = useState([]);
+  const loadRecipesFromStorage = () => {
+    const savedRecipes = localStorage.getItem('recipes');
+    return savedRecipes ? JSON.parse(savedRecipes) : [];
+  };
+
+  const [recipes, setRecipes] = useState(loadRecipesFromStorage());
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
   const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+  }, [recipes]);
 
   const handleAddRecipe = (e) => {
     e.preventDefault();
@@ -27,7 +36,6 @@ const RecipeBook = () => {
     <div className="recipe-book">
       <h1>Recipe Book</h1>
 
-      
       <Filter filter={filter} setFilter={setFilter} />
 
       <form onSubmit={handleAddRecipe} className="recipe-form">
@@ -42,7 +50,7 @@ const RecipeBook = () => {
           type="text"
           value={ingredients}
           onChange={(e) => setIngredients(e.target.value)}
-          placeholder="Ingredients (e.g., Chicken, Spices)"
+          placeholder="Ingredients (e.g., n, Spices)"
           className="form-input"
         />
         <textarea
